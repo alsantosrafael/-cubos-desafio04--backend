@@ -9,4 +9,13 @@ const checarSenha = async (senha, hash) => {
 	return compara;
 };
 
-module.exports = { checarSenha };
+/**
+ * Função responsável por codificar a senha enviada pelo usuário quando
+ * for cadastrado.
+ */
+const encrypt = async (senha) => {
+	const hash = await bcrypt.hash(senha, 10);
+	return hash;
+};
+
+module.exports = { checarSenha, encrypt };
