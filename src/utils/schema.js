@@ -5,28 +5,32 @@ const schema = {
 	(
 		id SERIAL PRIMARY KEY,
 		email VARCHAR(50),
-		senha VARCHAR(24),
-		nome VARCHAR(50)
+		senha VARCHAR(255),
+		nome VARCHAR(50),
+		deletado BOOL DEFAULT FALSE
 	);`,
 	2: `CREATE TABLE IF NOT EXISTS clients
 	(
 		id SERIAL PRIMARY KEY,
-		idUser INT,
+		id_user INT,
 		nome VARCHAR(50),
 		cpf VARCHAR(14),
 		email VARCHAR(50),
 		tel VARCHAR(20),
-		cobrancasFeitas INT DEFAULT 0,
-		cobrancasRecebidas INT DEFAULT 0,
-		estaInadimplente BOOL DEFAULT FALSE
+		cobrancas_feitas INT DEFAULT 0,
+		cobrancas_recebidas INT DEFAULT 0,
+		esta_inadimplente BOOL DEFAULT FALSE,
+		deletado BOOL DEFAULT FALSE
 	);`,
 	3: `CREATE TABLE IF NOT EXISTS bills
 	(
-		idDoCliente INT,
+		id_client INT,
 		descricao VARCHAR(255),
 		valor INT,
 		vencimento DATE NOT NULL,
-		linkDoBoleto VARCHAR(70)
+		link_do_boleto VARCHAR(255),
+		status VARCHAR(50) DEFAULT 'AGUARDANDO'
+		deletado BOOL DEFAULT FALSE
 	);`,
 };
 /* TOda vez que ocorrer um insert de bills ou pagamento de conta,
