@@ -1,3 +1,5 @@
+/* eslint-disable no-await-in-loop */
+/* eslint-disable no-restricted-syntax */
 const DB = require('./database');
 
 const schema = {
@@ -17,19 +19,18 @@ const schema = {
 		cpf VARCHAR(14),
 		email VARCHAR(50),
 		tel VARCHAR(20),
-		cobrancas_feitas INT DEFAULT 0,
-		cobrancas_recebidas INT DEFAULT 0,
-		esta_inadimplente BOOL DEFAULT FALSE,
 		deletado BOOL DEFAULT FALSE
 	);`,
 	3: `CREATE TABLE IF NOT EXISTS bills
 	(
+		id SERIAL PRIMARY KEY,
 		id_client INT,
 		descricao VARCHAR(255),
 		valor INT,
 		vencimento DATE NOT NULL,
 		link_do_boleto VARCHAR(255),
-		status VARCHAR(50) DEFAULT 'AGUARDANDO'
+		codigo_boleto TEXT NOT NULL
+		data_vencimento DATE
 		deletado BOOL DEFAULT FALSE
 	);`,
 };
@@ -56,5 +57,7 @@ const up = async (num = null) => {
 	console.log('Migração executada!');
 };
 
-// up();
-drop('users');
+up();
+// drop('users');
+// drop('clients');
+// drop('bills');

@@ -15,6 +15,6 @@ const verifica = async (ctx, next) => {
 		return response(ctx, 'Ação proibida', 403, 'Erro!');
 	}
 	return next();
-	}
 };
+
 module.exports = { verifica };
