@@ -15,5 +15,6 @@ module.exports = {
 		indent: ['error', 'tab', { SwitchCase: 1 }],
 		'no-tabs': [2, { allowIndentationTabs: true }],
 		'prettier/prettier': ['error'],
+		"endOfLine":"auto"
 	},
 };
