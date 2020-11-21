@@ -10,3 +10,5 @@ const pagamento = async (ctx) => {
 		linkBoleto,
 	} = ctx.request.body;
 };
+
+module.exports = { pagamento };
