@@ -1,7 +1,7 @@
 const Axios = require('axios').default;
-
-require('dotenv').config();
 /* MUDAR FUNçÃO PARA BOLETOS */
+require('dotenv').config();
+
 const pay = async (cobranca) => {
 	const { nome, cpf, vencimento, valor, descricao, linkBoleto } = cobranca;
 	try {
