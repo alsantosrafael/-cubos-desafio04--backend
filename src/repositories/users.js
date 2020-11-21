@@ -14,4 +14,17 @@ const criarUsuario = async (usuario) => {
 	return result.rows.shift();
 };
 
-module.exports = { criarUsuario };
+const obterUsuarioPorEmail = async (email = null) => {
+	if (!email) {
+		return null;
+	}
+
+	const query = {
+		text: `SELECT * FROM users WHERE email = $1 AND deletado = FALSE`,
+		values: [email],
+	};
+	const result = await db.query(query);
+	return result.rows.shift();
+};
+
+module.exports = { criarUsuario, obterUsuarioPorEmail };

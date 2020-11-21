@@ -12,4 +12,5 @@ router.get('/', (ctx) => {
 });
 
 router.post('/usuarios', Users.criarUsuario);
+router.post('/auth', Autenticar );
 module.exports = router;
