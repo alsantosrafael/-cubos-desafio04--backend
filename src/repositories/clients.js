@@ -1,15 +1,16 @@
 const db = require('../utils/database');
 
 const criarCliente = (cliente) => {
-	const { nome, cpf, email, tel } = cliente;
+	const {id_user, nome, cpf, email, tel } = cliente;
 	const query = {
-		text: `INSERT INTO clients(
+		text: `INSERT INTO clients (
+			id_user,
 			nome, 
 			cpf,
 			email,
 			tel
-			) VALUES ($1, $2, $3, $4) RETURNING *;`,
-		values: [nome, cpf, email, tel],
+			) VALUES ($1, $2, $3, $4, $5) RETURNING *;`,
+		values: [id_user, nome, cpf, email, tel],
 	};
 	const result = await db.query(query);
 	return result.rows.shift();
@@ -27,7 +28,7 @@ const obterClientePorEmail = async (email = null) => {
 	const result = await db.query(query);
 	return result.rows.shift();
 };
-
+//temos de travar aqui para q um usuario só possa alterar seus clientes
 const editarCliente = async (cliente) => {
 	const {id, nome, cpf, email} = cliente;
 
