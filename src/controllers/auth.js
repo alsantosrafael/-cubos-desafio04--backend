@@ -7,11 +7,12 @@ require('dotenv').config();
 
 const autenticar = async (ctx) => {
 	const { email = null, senha = null } = ctx.request.body;
+	
 	if (!email || !senha) {
 		return response(ctx, 400, { mensagem: 'Pedido mal formatado' });
 	}
 
-	const user = Users.obterUsuarioPorEmail(email);
+	const user = await Users.obterUsuarioPorEmail(email);
 
 	if (user) {
 		const compara = await Password.checarSenha(senha, user.senha);
