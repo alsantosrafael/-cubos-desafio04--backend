@@ -29,8 +29,8 @@ const schema = {
 		valor INT,
 		vencimento DATE NOT NULL,
 		link_do_boleto VARCHAR(255),
-		codigo_boleto TEXT NOT NULL
-		data_vencimento DATE
+		codigo_boleto TEXT NOT NULL,
+		data_vencimento DATE,
 		deletado BOOL DEFAULT FALSE
 	);`,
 };
