@@ -30,7 +30,6 @@ const schema = {
 		vencimento DATE NOT NULL,
 		link_do_boleto VARCHAR(255),
 		codigo_boleto TEXT NOT NULL,
-		data_vencimento DATE,
 		status TEXT NOT NULL DEFAULT 'AGUARDANDO',
 		deletado BOOL DEFAULT FALSE
 	);`,

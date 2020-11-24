@@ -6,9 +6,7 @@ const criarCobranca = async (cobranca) => {
 		descricao,
 		valor,
 		vencimento,
-		link_do_boleto,
 		codigo_boleto,
-		data_vencimento,
 	} = cobranca;
 	const query = {
 		text: `INSERT INTO bills (
@@ -18,8 +16,7 @@ const criarCobranca = async (cobranca) => {
 			vencimento,
 			link_do_boleto,
 			codigo_boleto,
-			data_vencimento,
-			) VALUES ($1, $2, $3, $4, $5, $6, $7) RETURNING *;`,
+			) VALUES ($1, $2, $3, $4, $5, $6) RETURNING *;`,
 		values: [
 			id_client,
 			descricao,
