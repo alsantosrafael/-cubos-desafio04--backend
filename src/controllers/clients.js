@@ -2,22 +2,16 @@ const response = require('../utils/response');
 const repositorioClientes = require('../repositories/clients');
 // const Bills =
 
-const testarExistenciaCliente = async (email = null, cpf = null) => {
+const testarExistenciaCliente = async (email = null, cpf = null, id_user) => {
 	let clienteExistenteEmail;
 	let clienteExistenteCPF;
 
 	if (email) {
-		clienteExistenteEmail = await repositorioClientes.obterCliente(
-			'email',
-			email
-		);
+		clienteExistenteEmail = await repositorioClientes.obterCliente('email', email, id_user);
 	}
 
 	if (cpf) {
-		clienteExistenteCPF = await repositorioClientes.obterCliente(
-			'cpf',
-			cpf
-		);
+		clienteExistenteCPF = await repositorioClientes.obterCliente('cpf', cpf, id_user);
 	}
 
 	if (clienteExistenteEmail || clienteExistenteCPF) {
@@ -35,7 +29,7 @@ const criarCliente = async (ctx) => {
 		return response(ctx, 400, { mensagem: 'Requisição mal formatada' });
 	}
 
-	const clienteExistente = await testarExistenciaCliente(email, cpf);
+	const clienteExistente = await testarExistenciaCliente(email, cpf, ctx.state.userId);
 	if (clienteExistente) {
 		return response(ctx, 403, { mensagem: 'Cliente já cadastrado!' });
 	}
@@ -58,7 +52,7 @@ const editarCliente = async (ctx) => {
 		return response(ctx, 400, { mensagem: 'Não foi localizada id' })
 	}
 
-	const cliente = await repositorioClientes.obterCliente('id', id);
+	const cliente = await repositorioClientes.obterCliente('id', id, ctx.state.userId);
 	if (!cliente) {
 		return response(ctx, 404, { mensagem: 'Cliente não encontrado' });
 	}
@@ -77,7 +71,7 @@ const editarCliente = async (ctx) => {
 		deletado: deletado ? deletado : cliente.deletado,
 	};
 
-	const clienteExistente = await testarExistenciaCliente(novoCliente.email, novoCliente.cpf);
+	const clienteExistente = await testarExistenciaCliente(novoCliente.email, novoCliente.cpf, ctx.state.userId);
 	if (clienteExistente) {
 		if (novoCliente.id !== id) {
 			return response(ctx, 403, { mensagem: 'Os dados fornecidos já estão em uso' });
@@ -121,8 +115,7 @@ const obterTodosClientes = async (ctx) => {
 };
 
 const buscarClientes = async (ctx) => {
-	const { busca } = ctx.request.body;
-	const { offset = 0, limit = 10 } = ctx.params;
+	const { offset = 0, limit = 10, busca = null } = ctx.params;
 	const { userId } = ctx.state;
 
 	const req = { id_user: userId, busca, offset, limit };

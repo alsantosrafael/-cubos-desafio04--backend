@@ -16,14 +16,14 @@ const criarCliente = async (cliente) => {
 	return result.rows.shift();
 };
 
-const obterCliente = async (campo, valor) => {
+const obterCliente = async (campo, valor, id_user) => {
 	if (!campo) {
 		return null;
 	}
 
 	const query = {
-		text: `SELECT * FROM clients WHERE ${campo} = $1 AND deletado = FALSE`,
-		values: [valor],
+		text: `SELECT * FROM clients WHERE ${campo} = $1 AND id_user = $2 AND deletado = FALSE`,
+		values: [valor, id_user],
 	};
 	const result = await db.query(query);
 	return result.rows.shift();
