@@ -1,6 +1,6 @@
 const db = require('../utils/database');
 
-const criarCliente = (cliente) => {
+const criarCliente = async (cliente) => {
 	const {id_user, nome, cpf, email, tel } = cliente;
 	const query = {
 		text: `INSERT INTO clients (
@@ -16,14 +16,14 @@ const criarCliente = (cliente) => {
 	return result.rows.shift();
 };
 
-const obterClientePorEmail = async (email = null) => {
-	if (!email) {
+const obterCliente = async (campo, valor) => {
+	if (!campo) {
 		return null;
 	}
 
 	const query = {
-		text: `SELECT * FROM clients WHERE email = $1 AND deletado = FALSE`,
-		values: [email],
+		text: `SELECT * FROM clients WHERE ${campo} = $1 AND deletado = FALSE`,
+		values: [valor],
 	};
 	const result = await db.query(query);
 	return result.rows.shift();
@@ -79,4 +79,4 @@ const buscarClientes = async (req) => {
 	const result = await db.query(query);
 	return result.rows;
 }
-module.exports = { criarCliente, obterClientePorEmail, editarCliente };
+module.exports = { criarCliente, obterCliente, editarCliente };
