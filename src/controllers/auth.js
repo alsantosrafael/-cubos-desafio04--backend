@@ -22,7 +22,10 @@ const autenticar = async (ctx) => {
 				process.env.JWT_SECRET,
 				{ expiresIn: '1h' }
 			);
-			return response(ctx, 200, { token });
+			return response(ctx, 200, { 
+				mensagem: "Usuário logado com sucesso!",
+				token 
+			});
 		}
 	}
 	return response(ctx, 200, { mensagem: 'Email ou senha incorretos' });

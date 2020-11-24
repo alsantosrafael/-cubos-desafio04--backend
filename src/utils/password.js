@@ -5,8 +5,8 @@ const bcrypt = require('bcryptjs');
  * com a hash obtida do banco de dados
  */
 const checarSenha = async (senha, hash) => {
-	const compara = await bcrypt.compare(senha, hash);
-	return compara;
+    const compara = await bcrypt.compare(senha, hash);
+    return compara;
 };
 
 /**
@@ -14,8 +14,8 @@ const checarSenha = async (senha, hash) => {
  * for cadastrado.
  */
 const encrypt = async (senha) => {
-	const hash = await bcrypt.hash(senha, 10);
-	return hash;
+    const hash = await bcrypt.hash(senha, 10);
+    return hash;
 };
 
 module.exports = { checarSenha, encrypt };
