@@ -12,7 +12,7 @@ const verifica = async (ctx, next) => {
 		ctx.state.userId = verificacao.id;
 		ctx.state.email = verificacao.email;
 	} catch (err) {
-		return response(ctx, 'Ação proibida', 403, 'Erro!');
+		return response(ctx, 403, { mensagem: "erro!" });
 	}
 	return next();
 };

@@ -9,10 +9,8 @@ const Session = require('./middlewares/session');
 /*
  ** Definição de rotas
  */
-router.get('/', (ctx) => {
-	ctx.body = 'Hello, World!';
-});
 router.post('/auth', Autenticar);
+
 router.post('/usuarios', Password.encrypt, Users.criarUsuario);
 
 //router.post('/clientes', Session.verifica, Users.criarUsuario);
