@@ -4,17 +4,23 @@ const response = require('../utils/response');
 // require('dotenv').config();
 
 const verifica = async (ctx, next) => {
-	const [, token] = ctx.headers.authorization.split(' ');
+	const { authorization } = ctx.headers
 
-	try {
-		const verificacao = await jwt.verify(token, process.env.JWT_SECRET);
+	if (typeof authorization === 'string') {
+		const [, token] = ctx.headers.authorization.split(' ');
 
-		ctx.state.userId = verificacao.id;
-		ctx.state.email = verificacao.email;
-	} catch (err) {
-		return response(ctx, 403, { mensagem: "erro!" });
+		try {
+			const verificacao = await jwt.verify(token, process.env.JWT_SECRET);
+
+			ctx.state.userId = verificacao.id;
+			ctx.state.email = verificacao.email;
+		} catch (err) {
+			return response(ctx, 401, { mensagem: "Você não tem autorização para efetuar esta ação." });
+		}
+		return next();
 	}
-	return next();
+	return response(ctx, 401, { mensagem: "Você não tem autorização para efetuar esta ação." });
+	
 };
 
 module.exports = { verifica };

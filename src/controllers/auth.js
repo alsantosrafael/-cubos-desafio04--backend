@@ -28,7 +28,7 @@ const autenticar = async (ctx) => {
 			});
 		}
 	}
-	return response(ctx, 200, { mensagem: 'Email ou senha incorretos' });
+	return response(ctx, 401, { mensagem: 'Email ou senha incorretos' });
 };
 
 module.exports = autenticar;
