@@ -25,6 +25,39 @@ const criarCliente = async (ctx) => {
 	return response(ctx, 201, { id: retorno.id })
 }
 
+const editarCliente = async (ctx) => {
+	const { id, nome, cpf, email, tel, deletado } = ctx.request.body;
+
+	const cliente = await repositorioClientes.obterCliente("id", id)
+	
+	if (!cliente) {
+		return response(ctx, 404, { mensagem: "cliente não encontrado" })
+	}
+
+	if (cliente.deletado) {
+		return (ctx, 403, { mensagem: "o cliente foi deletado." })
+	}
+
+	const novoCliente = {
+		id,
+		id_user: cliente.id_user,
+		nome: nome ? nome : cliente.nome,
+		cpf: cpf ? cpf : cliente.cpf,
+		email: email ? email : cliente.email,
+		tel: tel ? tel : cliente.tel,
+		deletado: deletado ? deletado : cliente.deletado
+	}
+
+	const retorno = await repositorioClientes.editarCliente(novoCliente);
+	return response(ctx, 200, { 
+		id: retorno.id,
+		nome: retorno.nome,
+		cpf: retorno.cpf,
+		email: retorno.email  
+	})
+}
+
 module.exports = {
 	criarCliente,
+	editarCliente
 }
