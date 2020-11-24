@@ -1,5 +1,6 @@
 const response = require('../utils/response');
 const repositorioClientes = require('../repositories/clients');
+// const Bills =
 
 const criarCliente = async (ctx) => {
 	const { nome, cpf, email, tel } = ctx.request.body;
@@ -42,7 +43,7 @@ const editarCliente = async (ctx) => {
 		id,
 		id_user: cliente.id_user,
 		nome: nome ? nome : cliente.nome,
-		cpf: cpf ? cpf : cliente.cpf,
+		cpf: cpf ? cpf : cliente.cpf,  // confimar com juninho a permissão
 		email: email ? email : cliente.email,
 		tel: tel ? tel : cliente.tel,
 		deletado: deletado ? deletado : cliente.deletado
@@ -57,7 +58,68 @@ const editarCliente = async (ctx) => {
 	})
 }
 
+const obterTodosClientes = async (ctx) => {
+	const { offset = 0, limit = 10 } = ctx.params;
+	const { userId } = ctx.state;
+
+	const req = { id_user: userId, offset, limit };
+	const clientes = await repositorioClientes.obterTodosClientes(req);
+	if (!clientes) {
+		return response(ctx, 404, {
+			mensagem:
+				'Erro! Não existem clientes cadastrados para esse usuário!',
+		});
+	}
+	const clientesCompletos = clientes.map((cliente) => {
+		// const cobrancasFeitas = await Bills.
+		// const cobrancasRecebidas = await Bills.
+		return {
+			nome: cliente.nome,
+			email: cliente.email,
+			tel: cliente.tel /*VER COM JUNINHO SE COLOCA OU NAO */,
+			cobrancasFeitas: 0,
+			cobrancasRecebidas: 0,
+			estaInadimplente: false,
+		};
+	});
+
+	return response(ctx, 201, { clientesCompletos });
+};
+
+const buscarClientes = async (ctx) => {
+	const { busca } = ctx.request.body;
+	const { offset = 0, limit = 10 } = ctx.params;
+	const { userId } = ctx.state;
+
+	const req = { id_user: userId, busca, offset, limit };
+	const clientes = await repositorioClientes.buscarClientes(req);
+
+	if (!clientes) {
+		return response(ctx, 404, {
+			mensagem:
+				'Erro! Não existem clientes cadastrados para esse usuário!',
+		});
+	}
+
+	const clientesCompletos = clientes.map((cliente) => {
+		// const cobrancasFeitas = await Bills.
+		// const cobrancasRecebidas = await Bills.
+		return {
+			nome: cliente.nome,
+			email: cliente.email,
+			tel: cliente.tel /*VER COM JUNINHO SE COLOCA OU NAO */,
+			cobrancasFeitas: 0,
+			cobrancasRecebidas: 0,
+			estaInadimplente: false,
+		};
+	});
+
+	return response(ctx, 201, { clientesCompletos });
+};
+
 module.exports = {
 	criarCliente,
-	editarCliente
+	editarCliente,
+	obterTodosClientes, 
+	buscarClientes
 }

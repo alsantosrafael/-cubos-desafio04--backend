@@ -47,7 +47,7 @@ const editarCliente = async (cliente) => {
 }
 //Fazer inner join aqui com as bills
 const obterTodosClientes = async (req) => {
-	const {id_user, offset, limit} = req
+	const {id_user, offset, limit = 10} = req
 
 	const query = {
 		text:`SELECT * 
