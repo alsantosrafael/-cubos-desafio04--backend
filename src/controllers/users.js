@@ -21,7 +21,7 @@ const criarUsuario = async (ctx) => {
 	
 	/*Adicionar email de confirmação/registro */
 
-	return response(ctx, 201, result)
+	return response(ctx, 201, { id: result.id })
 
 };
 
