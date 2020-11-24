@@ -28,7 +28,7 @@ const obterCliente = async (campo, valor) => {
 	const result = await db.query(query);
 	return result.rows.shift();
 };
-//temos de travar aqui para q um usuario só possa alterar seus clientes
+
 const editarCliente = async (cliente) => {
 	const {id, nome, cpf, email, tel, deletado} = cliente;
 

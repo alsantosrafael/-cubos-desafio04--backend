@@ -27,6 +27,8 @@ const testarExistenciaCliente = async (email = null, cpf = null) => {
 	}
 }
 
+// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ 
+
 const criarCliente = async (ctx) => {
 	const { nome, cpf, email, tel } = ctx.request.body;
 	if (!nome || !cpf || !email || !tel) {
@@ -52,15 +54,17 @@ const criarCliente = async (ctx) => {
 
 const editarCliente = async (ctx) => {
 	const { id, nome, cpf, email, tel, deletado } = ctx.request.body;
+	if (!id) {
+		return response(ctx, 400, { mensagem: 'Não foi localizada id' })
+	}
 
 	const cliente = await repositorioClientes.obterCliente('id', id);
-
 	if (!cliente) {
 		return response(ctx, 404, { mensagem: 'Cliente não encontrado' });
 	}
 
-	if (cliente.deletado) {
-		return ctx, 403, { mensagem: 'O cliente foi deletado.' };
+	if (cliente.id_user !== ctx.state.userId) {
+		return response(ctx, 401, { mensagem: "Você não tem autorização para efetuar esta ação." });
 	}
 
 	const novoCliente = {
@@ -75,7 +79,9 @@ const editarCliente = async (ctx) => {
 
 	const clienteExistente = await testarExistenciaCliente(novoCliente.email, novoCliente.cpf);
 	if (clienteExistente) {
-		return response(ctx, 403, { mensagem: 'Os dados fornecidos já estão em uso' });
+		if (novoCliente.id !== id) {
+			return response(ctx, 403, { mensagem: 'Os dados fornecidos já estão em uso' });
+		}
 	}
 
 	const retorno = await repositorioClientes.editarCliente(novoCliente);
