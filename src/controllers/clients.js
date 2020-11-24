@@ -2,22 +2,40 @@ const response = require('../utils/response');
 const repositorioClientes = require('../repositories/clients');
 // const Bills =
 
+const testarExistenciaCliente = async (email = null, cpf = null) => {
+	let clienteExistenteEmail;
+	let clienteExistenteCPF;
+
+	if (email) {
+		clienteExistenteEmail = await repositorioClientes.obterCliente(
+			'email',
+			email
+		);
+	}
+
+	if (cpf) {
+		clienteExistenteCPF = await repositorioClientes.obterCliente(
+			'cpf',
+			cpf
+		);
+	}
+
+	if (clienteExistenteEmail || clienteExistenteCPF) {
+		return true;
+	} else {
+		return false;
+	}
+}
+
 const criarCliente = async (ctx) => {
 	const { nome, cpf, email, tel } = ctx.request.body;
 	if (!nome || !cpf || !email || !tel) {
 		return response(ctx, 400, { mensagem: 'Requisição mal formatada' });
 	}
 
-	const clienteExistenteEmail = await repositorioClientes.obterCliente(
-		'email',
-		email
-	);
-	const clienteExistenteCPf = await repositorioClientes.obterCliente(
-		'cpf',
-		cpf
-	);
-	if (clienteExistenteEmail || clienteExistenteCPf) {
-		return response(ctx, 400, { mensagem: 'Cliente já cadastrado!' });
+	const clienteExistente = await testarExistenciaCliente(email, cpf);
+	if (clienteExistente) {
+		return response(ctx, 403, { mensagem: 'Cliente já cadastrado!' });
 	}
 
 	const novoCliente = {
@@ -49,11 +67,16 @@ const editarCliente = async (ctx) => {
 		id,
 		id_user: cliente.id_user,
 		nome: nome ? nome : cliente.nome,
-		cpf: cpf ? cpf : cliente.cpf, // confimar com juninho a permissão
+		cpf: cpf ? cpf : cliente.cpf,
 		email: email ? email : cliente.email,
 		tel: tel ? tel : cliente.tel,
 		deletado: deletado ? deletado : cliente.deletado,
 	};
+
+	const clienteExistente = await testarExistenciaCliente(novoCliente.email, novoCliente.cpf);
+	if (clienteExistente) {
+		return response(ctx, 403, { mensagem: 'Os dados fornecidos já estão em uso' });
+	}
 
 	const retorno = await repositorioClientes.editarCliente(novoCliente);
 	return response(ctx, 200, {
