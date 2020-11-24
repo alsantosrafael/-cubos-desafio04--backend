@@ -1,6 +1,6 @@
 const db = require('../utils/database');
 
-const criarCliente = (cliente) => {
+const criarCliente = async (cliente) => {
 	const {id_user, nome, cpf, email, tel } = cliente;
 	const query = {
 		text: `INSERT INTO clients (
@@ -16,30 +16,31 @@ const criarCliente = (cliente) => {
 	return result.rows.shift();
 };
 
-const obterClientePorEmail = async (email = null) => {
-	if (!email) {
+const obterCliente = async (campo, valor) => {
+	if (!campo) {
 		return null;
 	}
 
 	const query = {
-		text: `SELECT * FROM clients WHERE email = $1 AND deletado = FALSE`,
-		values: [email],
+		text: `SELECT * FROM clients WHERE ${campo} = $1 AND deletado = FALSE`,
+		values: [valor],
 	};
 	const result = await db.query(query);
 	return result.rows.shift();
 };
 //temos de travar aqui para q um usuario só possa alterar seus clientes
 const editarCliente = async (cliente) => {
-	const {id, nome, cpf, email} = cliente;
+	const {id, nome, cpf, email, tel, deletado} = cliente;
 
 	const query = {
 		text: `UPDATE clients 
 		SET nome = $1,
 		cpf = $2,
-		email = $3
-		tel = $4
-		WHERE id = $5 RETURNING *`,
-		values: [nome, cpf, email, tel, id]
+		email = $3,
+		tel = $4,
+		deletado = $5
+		WHERE id = $6 RETURNING *`,
+		values: [nome, cpf, email, tel, deletado,  id]
 	}
 	const result = await db.query(query);
 	return result.rows.shift();
@@ -79,4 +80,4 @@ const buscarClientes = async (req) => {
 	const result = await db.query(query);
 	return result.rows;
 }
-module.exports = { criarCliente, obterClientePorEmail, editarCliente };
+module.exports = { criarCliente, obterCliente, editarCliente };

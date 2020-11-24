@@ -13,7 +13,8 @@ router.post('/auth', Autenticar);
 
 router.post('/usuarios', Password.encrypt, Users.criarUsuario);
 
-//router.post('/clientes', Session.verifica, Users.criarUsuario);
+router.post('/clientes', Session.verifica, Clients.criarCliente);
+router.put('/clientes', Session.verifica, Clients.editarCliente);
 //router.put('/clientes/:id', Session.verifica, Clients. )
 
 module.exports = router;
