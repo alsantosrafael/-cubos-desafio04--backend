@@ -45,9 +45,9 @@ const editarCliente = async (cliente) => {
 	const result = await db.query(query);
 	return result.rows.shift();
 }
-//Fazer inner join aqui com as bills
-const obterTodosClientes = async (req) => {
-	const {id_user, offset, limit = 10} = req
+
+const listarClientesSemBusca = async (req) => {
+	const {id_user, offset, limit} = req
 
 	const query = {
 		text:`SELECT * 
@@ -62,7 +62,7 @@ const obterTodosClientes = async (req) => {
 	return result.rows;
 }
 
-const buscarClientes = async (req) => {
+const listarClientesComBusca = async (req) => {
 	const {id_user, busca, limit, offset} = req;
 
 	const query = {
@@ -72,7 +72,8 @@ const buscarClientes = async (req) => {
 		AND id_user = $1 
 		AND (nome LIKE $2 OR 
 			email LIKE $2 OR
-			 cpf LIKE $2)
+			cpf LIKE $2 OR
+			tel like $2)
 		LIMIT $3
 		OFFSET $4`,
 		values: [id_user, `%${busca}%`, limit, offset]
@@ -80,4 +81,10 @@ const buscarClientes = async (req) => {
 	const result = await db.query(query);
 	return result.rows;
 }
-module.exports = { criarCliente, obterCliente, editarCliente };
+module.exports = { 
+	criarCliente, 
+	obterCliente, 
+	editarCliente, 
+	listarClientesSemBusca,
+	listarClientesComBusca 
+};

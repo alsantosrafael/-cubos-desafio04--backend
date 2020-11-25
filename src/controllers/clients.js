@@ -87,7 +87,7 @@ const editarCliente = async (ctx) => {
 	});
 };
 
-const obterTodosClientes = async (ctx) => {
+/* const obterTodosClientes = async (ctx) => {
 	const { offset = 0, limit = 10 } = ctx.params;
 	const { userId } = ctx.state;
 
@@ -104,7 +104,7 @@ const obterTodosClientes = async (ctx) => {
 		return {
 			nome: cliente.nome,
 			email: cliente.email,
-			tel: cliente.tel /*VER COM JUNINHO SE COLOCA OU NAO */,
+			tel: cliente.tel /*VER COM JUNINHO SE COLOCA OU NAO ,
 			cobrancasFeitas: 0,
 			cobrancasRecebidas: 0,
 			estaInadimplente: false,
@@ -112,19 +112,32 @@ const obterTodosClientes = async (ctx) => {
 	});
 
 	return response(ctx, 201, { clientesCompletos });
-};
+}; */
 
-const buscarClientes = async (ctx) => {
-	const { offset = 0, limit = 10, busca = null } = ctx.params;
+const listarClientes = async (ctx) => {
+	const { offset = 0, clientesPorPagina = 10, busca = null } = ctx.query;
 	const { userId } = ctx.state;
 
-	const req = { id_user: userId, busca, offset, limit };
-	const clientes = await repositorioClientes.buscarClientes(req);
+	const req = { id_user: userId, busca, offset, limit: clientesPorPagina };
+	console.log(userId)
+	let clientes;
 
-	if (!clientes) {
-		return response(ctx, 404, {
-			mensagem: 'Não existem clientes cadastrados para esse usuário!',
-		});
+	if (!busca) {
+		clientes = await repositorioClientes.listarClientesSemBusca(req);
+
+		if (clientes.length === 0) {
+			return response(ctx, 404, {
+				mensagem: 'Não existem clientes cadastrados para esse usuário!',
+			});
+		}
+	} else {
+		clientes = await repositorioClientes.listarClientesComBusca(req);
+
+		if (clientes.length === 0) {
+			return response(ctx, 404, {
+				mensagem: 'Não existem clientes para essa busca!',
+			});
+		}
 	}
 
 	const clientesCompletos = clientes.map((cliente) => {
@@ -132,20 +145,19 @@ const buscarClientes = async (ctx) => {
 		// const cobrancasRecebidas = await Bills.
 		return {
 			nome: cliente.nome,
-			email: cliente.email,
-			tel: cliente.tel /*VER COM JUNINHO SE COLOCA OU NAO */,
+			email: cliente.email,	
 			cobrancasFeitas: 0,
 			cobrancasRecebidas: 0,
 			estaInadimplente: false,
 		};
 	});
 
-	return response(ctx, 201, { clientesCompletos });
+	return response(ctx, 201, { clientes: [...clientesCompletos] });
 };
 
 module.exports = {
 	criarCliente,
 	editarCliente,
-	obterTodosClientes,
-	buscarClientes,
+	//obterTodosClientes,
+	listarClientes,
 };
