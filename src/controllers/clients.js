@@ -87,46 +87,18 @@ const editarCliente = async (ctx) => {
 	});
 };
 
-/* const obterTodosClientes = async (ctx) => {
-	const { offset = 0, limit = 10 } = ctx.params;
-	const { userId } = ctx.state;
-
-	const req = { id_user: userId, offset, limit };
-	const clientes = await repositorioClientes.obterTodosClientes(req);
-	if (!clientes) {
-		return response(ctx, 404, {
-			mensagem: 'Não existem clientes cadastrados para esse usuário!',
-		});
-	}
-	const clientesCompletos = clientes.map((cliente) => {
-		// const cobrancasFeitas = await Bills.
-		// const cobrancasRecebidas = await Bills.
-		return {
-			nome: cliente.nome,
-			email: cliente.email,
-			tel: cliente.tel /*VER COM JUNINHO SE COLOCA OU NAO ,
-			cobrancasFeitas: 0,
-			cobrancasRecebidas: 0,
-			estaInadimplente: false,
-		};
-	});
-
-	return response(ctx, 201, { clientesCompletos });
-}; */
-
 const listarClientes = async (ctx) => {
 	const { offset = 0, clientesPorPagina = 10, busca = null } = ctx.query;
 	const { userId } = ctx.state;
 
 	const req = { id_user: userId, busca, offset, limit: clientesPorPagina };
-	console.log(userId)
 	let clientes;
 
 	if (!busca) {
 		clientes = await repositorioClientes.listarClientesSemBusca(req);
 
 		if (clientes.length === 0) {
-			return response(ctx, 404, {
+			return response(ctx, 204, {
 				mensagem: 'Não existem clientes cadastrados para esse usuário!',
 			});
 		}
@@ -134,7 +106,7 @@ const listarClientes = async (ctx) => {
 		clientes = await repositorioClientes.listarClientesComBusca(req);
 
 		if (clientes.length === 0) {
-			return response(ctx, 404, {
+			return response(ctx, 204, {
 				mensagem: 'Não existem clientes para essa busca!',
 			});
 		}
@@ -152,12 +124,11 @@ const listarClientes = async (ctx) => {
 		};
 	});
 
-	return response(ctx, 201, { clientes: [...clientesCompletos] });
+	return response(ctx, 200, { clientes: [...clientesCompletos] });
 };
 
 module.exports = {
 	criarCliente,
 	editarCliente,
-	//obterTodosClientes,
 	listarClientes,
 };
