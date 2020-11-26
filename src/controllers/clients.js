@@ -1,5 +1,6 @@
-const response = require('../utils/response');
-const repositorioClientes = require('../repositories/clients');
+import response from '../utils/response';
+import { obterCliente, criarCliente as _criarCliente, editarCliente as _editarCliente, listarClientesSemBusca, listarClientesComBusca } from '../repositories/clients';
+import { isValid as isValidCpf } from "@fnando/cpf";
 // const Bills =
 
 const testarExistenciaCliente = async (email = null, cpf = null, id_user) => {
@@ -7,11 +8,11 @@ const testarExistenciaCliente = async (email = null, cpf = null, id_user) => {
 	let clienteExistenteCPF;
 
 	if (email) {
-		clienteExistenteEmail = await repositorioClientes.obterCliente('email', email, id_user);
+		clienteExistenteEmail = await obterCliente('email', email, id_user);
 	}
 
 	if (cpf) {
-		clienteExistenteCPF = await repositorioClientes.obterCliente('cpf', cpf, id_user);
+		clienteExistenteCPF = await obterCliente('cpf', cpf, id_user);
 	}
 
 	if (clienteExistenteEmail || clienteExistenteCPF) {
@@ -29,6 +30,10 @@ const criarCliente = async (ctx) => {
 		return response(ctx, 400, { mensagem: 'Requisição mal formatada' });
 	}
 
+	if (!isValidCpf(cpf)) {
+		return response(ctx, 400, { mensagem: 'O cpf não é válido'});
+	}
+
 	const clienteExistente = await testarExistenciaCliente(email, cpf, ctx.state.userId);
 	if (clienteExistente) {
 		return response(ctx, 403, { mensagem: 'Cliente já cadastrado!' });
@@ -42,7 +47,7 @@ const criarCliente = async (ctx) => {
 		tel,
 	};
 
-	const retorno = await repositorioClientes.criarCliente(novoCliente);
+	const retorno = await _criarCliente(novoCliente);
 	return response(ctx, 201, { id: retorno.id });
 };
 
@@ -52,7 +57,7 @@ const editarCliente = async (ctx) => {
 		return response(ctx, 400, { mensagem: 'Não foi localizada id' })
 	}
 
-	const cliente = await repositorioClientes.obterCliente('id', id, ctx.state.userId);
+	const cliente = await obterCliente('id', id, ctx.state.userId);
 	if (!cliente) {
 		return response(ctx, 404, { mensagem: 'Cliente não encontrado' });
 	}
@@ -78,7 +83,7 @@ const editarCliente = async (ctx) => {
 		}
 	}
 
-	const retorno = await repositorioClientes.editarCliente(novoCliente);
+	const retorno = await _editarCliente(novoCliente);
 	return response(ctx, 200, {
 		id: retorno.id,
 		nome: retorno.nome,
@@ -95,7 +100,7 @@ const listarClientes = async (ctx) => {
 	let clientes;
 
 	if (!busca) {
-		clientes = await repositorioClientes.listarClientesSemBusca(req);
+		clientes = await listarClientesSemBusca(req);
 
 		if (clientes.length === 0) {
 			return response(ctx, 204, {
@@ -103,7 +108,7 @@ const listarClientes = async (ctx) => {
 			});
 		}
 	} else {
-		clientes = await repositorioClientes.listarClientesComBusca(req);
+		clientes = await listarClientesComBusca(req);
 
 		if (clientes.length === 0) {
 			return response(ctx, 204, {
@@ -127,7 +132,7 @@ const listarClientes = async (ctx) => {
 	return response(ctx, 200, { clientes: [...clientesCompletos] });
 };
 
-module.exports = {
+export default {
 	criarCliente,
 	editarCliente,
 	listarClientes,
