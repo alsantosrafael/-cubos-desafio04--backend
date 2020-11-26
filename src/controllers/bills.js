@@ -1,58 +1,74 @@
-const repositorioBills = require('../repositories/bills');
-const repositorioClients = require('../repositories/clients');
-const Pagarme = require('../utils/pagarme');
 const response = require('../utils/response');
+const clienteRepositorio = require('../repositories/clients');
+const cobrancasRepositorio = require('../repositories/bills');
+const pagarmeUtils = require('../utils/pagarme');
 
 const criarCobranca = async (ctx) => {
+	const idDoUsuario = ctx.state.userId;
+
 	const {
 		idDoCliente = null,
 		descricao = null,
 		valor = null,
-		vencimento = null,
+		vencimento = null
 	} = ctx.request.body;
 
 	if (!idDoCliente || !descricao || !valor || !vencimento) {
-		return response(ctx, 400, { mensagem: 'Requisição mal-formatada!' });
+		return reponse(ctx, 400, { mensagem: "Pedido mal formatado" });
 	}
-	const existeCliente = await repositorioClients.obterCliente(
-		id,
-		idDoCliente
-	);
 
-	if (!existeCliente) {
-		return response(ctx, 404, {
-			mensagem: 'Não há clientes registrados com o id inserido!',
-		});
+	if (Number.isNaN(valor) || valor < 100) {
+		return response(ctx, 400, { mensagem: 'Valor inválido' });
 	}
-	if (Number(valor).isNaN()) {
-		return response(ctx, 403, {
-			mensagem: 'Insira um valor em centavos no campo "valor"!',
-		});
+
+	const padraoData = /^[0-9]{4}\-[0-9]{2}\-[0-9]{2}$/;
+	if  (!padraoData.test(vencimento)  || Number.isNaN(new Date(vencimento).getTime()) ||
+	new Date().getTime() > new Date(vencimento).getTime()) {
+		return response(ctx, 400, { mensagem: 'Data inválida'});
+	} 
+
+	const cliente  = await clienteRepositorio.obterCliente('id', idDoCliente, idDoUsuario);
+
+	if (!cliente) {
+		return response(ctx, 400, { mensagem: 'Cliente não identificado' });
 	}
-	if (!Date.parse(vencimento)) {
-		return response(ctx, 403, {
-			mensagem: 'Insira uma data válida!',
-		});
-	}
-	/*Gerar boleto com função da pagar-me, pegar resposta e montar objeto cobranca */
-	const cobranca = {
-		id_client: idDoCliente,
-		descricao,
-		valor: Number(valor),
-		vencimento: Date.parse(vencimento),
-		link_do_boleto,
-		codigo_boleto,
+
+	const pagarmeCliente = {
+		type: 'individual',
+		country: 'br',
+		name: cliente.nome,
+		email: cliente.email,
+		external_id: `${cliente.id}`,
+		documents: [
+			{
+				type: 'cpf',
+				number: '040.850.815-94'
+			}
+		]
 	};
 
-	const boleto = await repositorioBills.criarCobranca(cobranca);
-	return response(ctx, 201, {
-		idDoCliente: boleto.id_client,
-		descricao: boleto.descricao,
-		valor: boleto.valor,
-		vencimento: boleto.vencimento,
-	});
-};
+	const respostaApiPagarme = await pagarmeUtils.criarBoleto(pagarmeCliente, valor, vencimento, descricao);
+	
+	const boleto = {
+		id_cliente: Number(respostaApiPagarme.data.customer.external_id),
+		// descricao: ,
+		valor: respostaApiPagarme.data.amount,
+		vencimento: respostaApiPagarme.data.boleto_expiration_date,
+		link_do_boleto: respostaApiPagarme.data.boleto_url,
+		codigo_boleto: respostaApiPagarme.data.boleto_barcode
+	}; //sem link do boleto e sem descrição
+	
+	const retornoBancoDeDados = await cobrancasRepositorio.criarCobranca(boleto);
+	
+	const cobranca = {
+		idDoCliente: retornoBancoDeDados.id_client,
+		descricao: retornoBancoDeDados.descricao,
+		valor: retornoBancoDeDados.valor,
+		vencimento : retornoBancoDeDados.vencimento,
+		linkDoBoleto: retornoBancoDeDados.link_do_boleto,
+		status: 'AGUARDANDO'
+	};
 
-const listarCobranca = async (ctx) => {};
-
-module.exports = { criarCobranca, listarCobranca };
+	return response(ctx, 201, { cobranca });
+}
+module.exports = { criarCobranca }

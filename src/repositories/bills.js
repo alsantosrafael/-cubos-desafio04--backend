@@ -1,53 +1,22 @@
 const db = require('../utils/database');
 
-const criarCobranca = async (cobranca) => {
-	const {
-		id_client,
-		descricao,
-		valor,
-		vencimento,
-		codigo_boleto,
-	} = cobranca;
+const criarCobranca = async (boleto) => {
+	const {id_cliente, descricao = '', valor, vencimento, link_do_boleto, codigo_boleto } = boleto;
 	const query = {
 		text: `INSERT INTO bills (
-			id_client
-			descricao,
-			valor,
-			vencimento,
-			link_do_boleto,
-			codigo_boleto,
-			) VALUES ($1, $2, $3, $4, $5, $6) RETURNING *;`,
-		values: [
-			id_client,
-			descricao,
-			valor,
-			vencimento,
-			link_do_boleto,
-			codigo_boleto,
-			data_vencimento,
-		],
+				id_client,
+				descricao,
+				valor,
+				vencimento,
+				link_do_boleto,
+				codigo_boleto
+				) VALUES ($1, $2, $3, $4, $5, $6) RETURNING *;`,
+		values: [id_cliente, descricao , valor, vencimento, link_do_boleto, codigo_boleto ],
 	};
 	const result = await db.query(query);
 	return result.rows.shift();
-	/*Após criação de cobrança, enviar email para cliente! */
-};
+}
 
-const listarCobrancas = async (req) => {
-	const { busca, limit, offset } = req;
-
-	const query = {
-		text: `SELECT * 
-		FROM bills 
-		WHERE deletado = FALSE 
-		AND (nome LIKE $1 OR 
-			email LIKE $1 OR
-			 cpf LIKE $1)
-		LIMIT $2
-		OFFSET $3`,
-		values: [`%${busca}%`, limit, offset],
-	};
-	const result = await db.query(query);
-	return result.rows;
-};
-
-module.exports = { criarCobranca, listarCobrancas };
+module.exports = {
+	criarCobranca,
+}

@@ -1,6 +1,6 @@
-import response from '../utils/response';
-import { obterCliente, criarCliente as _criarCliente, editarCliente as _editarCliente, listarClientesSemBusca, listarClientesComBusca } from '../repositories/clients';
-import { isValid as isValidCpf } from "@fnando/cpf";
+const response = require('../utils/response');
+const clienteRepositorio = require('../repositories/clients')
+const cpf = require("@fnando/cpf");
 // const Bills =
 
 const testarExistenciaCliente = async (email = null, cpf = null, id_user) => {
@@ -8,11 +8,11 @@ const testarExistenciaCliente = async (email = null, cpf = null, id_user) => {
 	let clienteExistenteCPF;
 
 	if (email) {
-		clienteExistenteEmail = await obterCliente('email', email, id_user);
+		clienteExistenteEmail = await clienteRepositorio.obterCliente('email', email, id_user);
 	}
 
 	if (cpf) {
-		clienteExistenteCPF = await obterCliente('cpf', cpf, id_user);
+		clienteExistenteCPF = await clienteRepositorio.obterCliente('cpf', cpf, id_user);
 	}
 
 	if (clienteExistenteEmail || clienteExistenteCPF) {
@@ -30,7 +30,7 @@ const criarCliente = async (ctx) => {
 		return response(ctx, 400, { mensagem: 'Requisição mal formatada' });
 	}
 
-	if (!isValidCpf(cpf)) {
+	if (!cpf.isValidCpf(cpf)) {
 		return response(ctx, 400, { mensagem: 'O cpf não é válido'});
 	}
 
@@ -47,7 +47,7 @@ const criarCliente = async (ctx) => {
 		tel,
 	};
 
-	const retorno = await _criarCliente(novoCliente);
+	const retorno = await clienteRepositorio.criarCliente(novoCliente);
 	return response(ctx, 201, { id: retorno.id });
 };
 
@@ -83,7 +83,7 @@ const editarCliente = async (ctx) => {
 		}
 	}
 
-	const retorno = await _editarCliente(novoCliente);
+	const retorno = await clienteRepositorio.editarCliente(novoCliente);
 	return response(ctx, 200, {
 		id: retorno.id,
 		nome: retorno.nome,
@@ -108,7 +108,7 @@ const listarClientes = async (ctx) => {
 			});
 		}
 	} else {
-		clientes = await listarClientesComBusca(req);
+		clientes = await clienteRepositorio.listarClientesComBusca(req);
 
 		if (clientes.length === 0) {
 			return response(ctx, 204, {
@@ -132,7 +132,7 @@ const listarClientes = async (ctx) => {
 	return response(ctx, 200, { clientes: [...clientesCompletos] });
 };
 
-export default {
+module.exports = {
 	criarCliente,
 	editarCliente,
 	listarClientes,
