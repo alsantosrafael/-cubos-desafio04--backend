@@ -31,7 +31,21 @@ const buscarCobrancas = async (id_user) => {
 	return result.rows;
 }
 
+const pagarCobranca = async (idCobranca) => {
+	const query = {
+		text: `UPDATE bills 
+				SET pago = true
+				WHERE id = $1
+				RETURNING *;`,
+		values: [idCobranca]
+	}
+	
+	const response = await db.query(query);
+	return response.rows.shift();
+}
+
 module.exports = {
 	criarCobranca,
 	buscarCobrancas,
+	pagarCobranca
 }

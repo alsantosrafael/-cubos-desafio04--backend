@@ -101,7 +101,24 @@ const listarCobrancas = async (ctx) => {
 	return response(ctx, 200, resposta )
 }
 
+const pagarCobranca = async (ctx) => {
+	const { idDaCobranca } = ctx.request.body;
+
+	if (!idDaCobranca || Number.isNaN(idDaCobranca)) {  // enviar uma id nao numerica retorna erro, porque?
+		return response(ctx, 400, { mensagem: 'Id inválida'})
+	}
+
+	const cobrancaPaga = await cobrancasRepositorio.pagarCobranca(idDaCobranca);
+
+	if (!cobrancaPaga) {
+		return response(ctx, 404, { mensgem: 'Não foi localizada a cobrança' } )
+	}
+	
+	return response(ctx, 200, { mensagem: 'cobrança paga com sucesso'});
+}
+
 module.exports = { 
 	criarCobranca,
-	listarCobrancas
+	listarCobrancas,
+	pagarCobranca
 }
