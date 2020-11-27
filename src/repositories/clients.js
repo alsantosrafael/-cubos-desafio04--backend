@@ -46,17 +46,13 @@ const editarCliente = async (cliente) => {
 	return result.rows.shift();
 }
 
-const listarClientesSemBusca = async (req) => {
-	const {id_user, offset, limit} = req
-
+const listarClientesSemBusca = async (id_user) => {
 	const query = {
 		text:`SELECT * 
 		FROM clients 
 		WHERE deletado = FALSE 
-		AND id_user = $1
-		LIMIT $2
-		OFFSET $3`,
-		values: [id_user, limit, offset]
+		AND id_user = $1`,
+		values: [id_user]
 	}
 	const result = await db.query(query);
 	return result.rows;

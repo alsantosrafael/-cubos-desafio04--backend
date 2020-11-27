@@ -2,6 +2,7 @@ const response = require('../utils/response');
 const clienteRepositorio = require('../repositories/clients');
 const cobrancasRepositorio = require('../repositories/bills');
 const pagarmeUtils = require('../utils/pagarme');
+const calcularPaginas = require('../utils/paginacao');
 
 const criarCobranca = async (ctx) => {
 	const idDoUsuario = ctx.state.userId;
@@ -71,4 +72,36 @@ const criarCobranca = async (ctx) => {
 
 	return response(ctx, 201, { cobranca });
 }
-module.exports = { criarCobranca }
+
+const listarCobrancas = async (ctx) => {
+	const { cobrancasPorPagina = 10, offset = 0} = ctx.query;
+	const { userId } = ctx.state;
+	
+	const todasAscobrancas = await cobrancasRepositorio.buscarCobrancas(userId);
+	const paginacao = calcularPaginas(todasAscobrancas, cobrancasPorPagina, offset);
+	
+	const boletosResposta = paginacao['itensDaPagina'].map(item => {
+		const resposta = {
+			id: item.id,
+			idDoCliente: item.id_client,
+			descricao: item.descricao,
+			valor: item.valor,
+			vencimento: item.vencimento,
+			linkDoBoleto: item.link_do_boleto,
+			status: item.pago ? 'PAGO' : new Date().getTime() > new Date(item.vencimento).getTime() ? 'VENCIDO' : "AGUARDANDO"
+		}
+		return resposta
+	})
+	
+	const resposta = {
+		paginaAtual: paginacao['paginaAtual'],
+		totalDePaginas: paginacao['paginasTotais'],
+		cobrancas: boletosResposta
+	}
+	return response(ctx, 200, resposta )
+}
+
+module.exports = { 
+	criarCobranca,
+	listarCobrancas
+}

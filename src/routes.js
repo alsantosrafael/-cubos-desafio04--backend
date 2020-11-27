@@ -23,6 +23,7 @@ router.put('/clientes', Session.verifica, Clients.editarCliente);
 router.get('/clientes', Session.verifica, Clients.listarClientes);
 
 // cobranças
-router.post('/cobrancas', Session.verifica, controllerCobranca.criarCobranca)
+router.post('/cobrancas', Session.verifica, controllerCobranca.criarCobranca);
+router.get('/cobrancas', Session.verifica, controllerCobranca.listarCobrancas);
 
 module.exports = router;

@@ -1,6 +1,7 @@
 const response = require('../utils/response');
 const clienteRepositorio = require('../repositories/clients')
 const cpf = require("@fnando/cpf");
+const calcularPaginas = require('../utils/paginacao');
 // const Bills =
 
 const testarExistenciaCliente = async (email = null, cpf = null, id_user) => {
@@ -96,11 +97,9 @@ const listarClientes = async (ctx) => {
 	const { offset = 0, clientesPorPagina = 10, busca = null } = ctx.query;
 	const { userId } = ctx.state;
 
-	const req = { id_user: userId, busca, offset, limit: clientesPorPagina };
 	let clientes;
-
 	if (!busca) {
-		clientes = await listarClientesSemBusca(req);
+		clientes = await listarClientesSemBusca(userId);
 
 		if (clientes.length === 0) {
 			return response(ctx, 204, {
@@ -108,7 +107,7 @@ const listarClientes = async (ctx) => {
 			});
 		}
 	} else {
-		clientes = await clienteRepositorio.listarClientesComBusca(req);
+		clientes = await clienteRepositorio.listarClientesComBusca(userId);
 
 		if (clientes.length === 0) {
 			return response(ctx, 204, {
@@ -117,7 +116,9 @@ const listarClientes = async (ctx) => {
 		}
 	}
 
-	const clientesCompletos = clientes.map((cliente) => {
+	const paginacao = calcularPaginas(todasAscobrancas, clientesPorPagina, offset)
+
+	const clientesCompletos = paginacao['itensDaPagina'].map((cliente) => {
 		// const cobrancasFeitas = await Bills.
 		// const cobrancasRecebidas = await Bills.
 		return {
