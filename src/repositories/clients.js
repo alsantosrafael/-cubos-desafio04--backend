@@ -59,8 +59,7 @@ const listarClientesSemBusca = async (id_user) => {
 }
 
 // corrigir para nova versao
-const listarClientesComBusca = async (req) => {
-	const {id_user, busca, limit, offset} = req;
+const listarClientesComBusca = async (userId, busca) => {
 
 	const query = {
 		text:`SELECT * 
@@ -70,8 +69,9 @@ const listarClientesComBusca = async (req) => {
 		AND (nome LIKE $2 OR 
 			email LIKE $2 OR
 			cpf LIKE $2)`,
-		values: [id_user, `%${busca}%`, limit, offset]
+		values: [userId, `%${busca}%`]
 	}
+	console.log(query)
 	const result = await db.query(query);
 	return result.rows;
 }
