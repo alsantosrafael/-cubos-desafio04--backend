@@ -71,7 +71,7 @@ const listarClientesComBusca = async (userId, busca) => {
 			cpf LIKE $2)`,
 		values: [userId, `%${busca}%`]
 	}
-	console.log(query)
+	
 	const result = await db.query(query);
 	return result.rows;
 }
