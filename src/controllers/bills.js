@@ -3,6 +3,7 @@ const clienteRepositorio = require('../repositories/clients');
 const cobrancasRepositorio = require('../repositories/bills');
 const pagarmeUtils = require('../utils/pagarme');
 const calcularPaginas = require('../utils/paginacao');
+const formatacaoRelatorios = require('../utils/formatacaoRelatorios')
 
 const criarCobranca = async (ctx) => {
 	const idDoUsuario = ctx.state.userId;
@@ -48,16 +49,16 @@ const criarCobranca = async (ctx) => {
 		]
 	};
 
-	const respostaApiPagarme = await pagarmeUtils.criarBoleto(pagarmeCliente, valor, vencimento, descricao);
-	
+	const respostaApiPagarme = await pagarmeUtils.criarBoleto(pagarmeCliente, valor, vencimento);
+	console.log(respostaApiPagarme)
 	const boleto = {
 		id_cliente: Number(respostaApiPagarme.data.customer.external_id),
-		// descricao: ,
+		descricao,
 		valor: respostaApiPagarme.data.amount,
 		vencimento: respostaApiPagarme.data.boleto_expiration_date,
 		link_do_boleto: respostaApiPagarme.data.boleto_url,
 		codigo_boleto: respostaApiPagarme.data.boleto_barcode
-	}; //sem link do boleto e sem descrição
+	};  // TODO ENDPOINT POSTBACK/PAGAMENTO DE BOLETO PELA PAGAR.ME https://docs.pagar.me/docs/realizando-uma-transacao-de-boleto-bancario (Simulando o pagamento de um boleto em teste)
 	
 	const retornoBancoDeDados = await cobrancasRepositorio.criarCobranca(boleto);
 	
@@ -80,18 +81,7 @@ const listarCobrancas = async (ctx) => {
 	const todasAscobrancas = await cobrancasRepositorio.buscarCobrancas(userId);
 	const paginacao = calcularPaginas(todasAscobrancas, cobrancasPorPagina, offset);
 	
-	const boletosResposta = paginacao['itensDaPagina'].map(item => {
-		const resposta = {
-			id: item.id,
-			idDoCliente: item.id_client,
-			descricao: item.descricao,
-			valor: item.valor,
-			vencimento: item.vencimento,
-			linkDoBoleto: item.link_do_boleto,
-			status: item.pago ? 'PAGO' : new Date().getTime() > new Date(item.vencimento).getTime() ? 'VENCIDO' : "AGUARDANDO"
-		}
-		return resposta
-	})
+	const boletosResposta = formatacaoRelatorios.formatarBoletos(paginacao['itensDaPagina']);
 	
 	const resposta = {
 		paginaAtual: paginacao['paginaAtual'],

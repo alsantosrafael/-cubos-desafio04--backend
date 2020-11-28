@@ -5,8 +5,7 @@ require('dotenv').config();
 const criarBoleto = async (
 	customer, 
 	amount, 
-	boleto_expiration_date,
-	boleto_instructions
+	boleto_expiration_date
 	) => {
 	
 		try {
@@ -17,7 +16,7 @@ const criarBoleto = async (
 					customer,
 					api_key: process.env.PAGARME_CHAVE,
 					boleto_expiration_date,
-					boleto_instructions,
+					boleto_instructions
 				}
 			)
 			return transaction;
