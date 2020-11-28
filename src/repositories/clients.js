@@ -58,6 +58,7 @@ const listarClientesSemBusca = async (id_user) => {
 	return result.rows;
 }
 
+// corrigir para nova versao
 const listarClientesComBusca = async (req) => {
 	const {id_user, busca, limit, offset} = req;
 
