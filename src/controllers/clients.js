@@ -1,6 +1,6 @@
 const response = require('../utils/response');
 const clienteRepositorio = require('../repositories/clients')
-const { isValidCpf } = require("@fnando/cpf");
+const { isValid } = require("@fnando/cpf");
 const calcularPaginas = require('../utils/paginacao');
 const { formatarClientes } = require('../utils/formatacaoRelatorios');
 const cobrancasRepositorio = require('../repositories/bills');
@@ -33,7 +33,7 @@ const criarCliente = async (ctx) => {
 		return response(ctx, 400, { mensagem: 'Requisição mal formatada' });
 	}
 
-	if (!isValidCpf(cpf)) {
+	if (!isValid(cpf)) {
 		return response(ctx, 400, { mensagem: 'O cpf não é válido'});
 	}
 
@@ -98,26 +98,22 @@ const editarCliente = async (ctx) => {
 const listarClientes = async (ctx) => {
 	const { offset = 0, clientesPorPagina = 10, busca = null } = ctx.query;
 	const { userId } = ctx.state;
-
+	
 	let clientes;
 	if (!busca) {
 		clientes = await clienteRepositorio.listarClientesSemBusca(userId);
-
+		
 		if (clientes.length === 0) {
-			return response(ctx, 204, {
-				mensagem: 'Não existem clientes cadastrados para esse usuário!',
-			});
+			return response(ctx, 200, { mensagem: 'Não existem clientes cadastrados para esse usuário!' });
 		}
 	} else {
-		clientes = await clienteRepositorio.listarClientesComBusca(userId);
+		clientes = await clienteRepositorio.listarClientesComBusca(userId, busca);
 
 		if (clientes.length === 0) {
-			return response(ctx, 204, {
-				mensagem: 'Não existem clientes para essa busca!',
-			});
+			return response(ctx, 200, { mensagem: 'Nenhum cliente foi encontrado.' });
 		}
 	}
-
+	
 	const cobrancas = await cobrancasRepositorio.buscarCobrancas(userId)
 	const paginacao = calcularPaginas(clientes, clientesPorPagina, offset);
 	const clientesFomatados = formatarClientes(paginacao['itensDaPagina'], cobrancas)
