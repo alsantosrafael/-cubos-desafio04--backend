@@ -69,10 +69,7 @@ const listarClientesComBusca = async (req) => {
 		AND id_user = $1 
 		AND (nome LIKE $2 OR 
 			email LIKE $2 OR
-			cpf LIKE $2 OR
-			tel like $2)
-		LIMIT $3
-		OFFSET $4`,
+			cpf LIKE $2)`,
 		values: [id_user, `%${busca}%`, limit, offset]
 	}
 	const result = await db.query(query);

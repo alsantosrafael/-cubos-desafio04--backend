@@ -29,14 +29,18 @@ const formatarClientes = (listaDeClientes, listaDeCobrancas) => {
 	}
 	
 	for (let cobranca of cobrancasFormatadas) {
-		if (cobranca.status === "PAGO") {
-			clientesFormatadosObjeto[cobranca.idDoCliente].cobrancasFeitas += cobranca.valor;
-			clientesFormatadosObjeto[cobranca.idDoCliente].cobrancasRecebidas += cobranca.valor 
-		} else if (cobranca.status === "AGUARDANDO") {
-			clientesFormatadosObjeto[cobranca.idDoCliente].cobrancasFeitas += cobranca.valor;
+		if (clientesFormatadosObjeto[cobranca.idDoCliente]) {
+			if (cobranca.status === "PAGO") {
+				clientesFormatadosObjeto[cobranca.idDoCliente].cobrancasFeitas += cobranca.valor;
+				clientesFormatadosObjeto[cobranca.idDoCliente].cobrancasRecebidas += cobranca.valor 
+			} else if (cobranca.status === "AGUARDANDO") {
+				clientesFormatadosObjeto[cobranca.idDoCliente].cobrancasFeitas += cobranca.valor;
+			} else if (cobranca.status === "VENCIDO") {
+				clientesFormatadosObjeto[cobranca.idDoCliente].cobrancasFeitas += cobranca.valor;
+				clientesFormatadosObjeto[cobranca.idDoCliente].estaInadimplente = true;
+			}
 		} else {
-			clientesFormatadosObjeto[cobranca.idDoCliente].cobrancasFeitas += cobranca.valor;
-			clientesFormatadosObjeto[cobranca.idDoCliente].estaInadimplente = true;
+			continue
 		}
 	}
 

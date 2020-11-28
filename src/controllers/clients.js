@@ -1,8 +1,10 @@
 const response = require('../utils/response');
 const clienteRepositorio = require('../repositories/clients')
-const cpf = require("@fnando/cpf");
+const { isValidCpf } = require("@fnando/cpf");
 const calcularPaginas = require('../utils/paginacao');
-// const Bills =
+const { formatarClientes } = require('../utils/formatacaoRelatorios');
+const cobrancasRepositorio = require('../repositories/bills');
+
 
 const testarExistenciaCliente = async (email = null, cpf = null, id_user) => {
 	let clienteExistenteEmail;
@@ -31,7 +33,7 @@ const criarCliente = async (ctx) => {
 		return response(ctx, 400, { mensagem: 'Requisição mal formatada' });
 	}
 
-	if (!cpf.isValidCpf(cpf)) {
+	if (!isValidCpf(cpf)) {
 		return response(ctx, 400, { mensagem: 'O cpf não é válido'});
 	}
 
@@ -99,7 +101,7 @@ const listarClientes = async (ctx) => {
 
 	let clientes;
 	if (!busca) {
-		clientes = await listarClientesSemBusca(userId);
+		clientes = await clienteRepositorio.listarClientesSemBusca(userId);
 
 		if (clientes.length === 0) {
 			return response(ctx, 204, {
@@ -116,21 +118,15 @@ const listarClientes = async (ctx) => {
 		}
 	}
 
-	const paginacao = calcularPaginas(todasAscobrancas, clientesPorPagina, offset)
-
-	const clientesCompletos = paginacao['itensDaPagina'].map((cliente) => {
-		// const cobrancasFeitas = await Bills.
-		// const cobrancasRecebidas = await Bills.
-		return {
-			nome: cliente.nome,
-			email: cliente.email,	
-			cobrancasFeitas: 0,
-			cobrancasRecebidas: 0,
-			estaInadimplente: false,
-		};
+	const cobrancas = await cobrancasRepositorio.buscarCobrancas(userId)
+	const paginacao = calcularPaginas(clientes, clientesPorPagina, offset);
+	const clientesFomatados = formatarClientes(paginacao['itensDaPagina'], cobrancas)
+	
+	return response(ctx, 200, { 
+		paginaAtual: paginacao.paginaAtual,
+        totalDePaginas: paginacao.paginasTotais,
+		clientes: clientesFomatados 
 	});
-
-	return response(ctx, 200, { clientes: [...clientesCompletos] });
 };
 
 module.exports = {
