@@ -17,7 +17,7 @@ const criarCobranca = async (boleto) => {
 	return result.rows.shift();
 }
 
-const buscarCobrancas = async (id_user) => {
+const listarCobrancas = async (id_user) => {
 	const query = {
 		text: `SELECT * FROM bills
 				WHERE id_client IN (
@@ -29,6 +29,17 @@ const buscarCobrancas = async (id_user) => {
 	
 	const result = await db.query(query);
 	return result.rows;
+}
+
+const buscarCobranca = async (idDaCobranca) => {
+	const query = {
+		text: `SELECT * FROM bills
+				WHERE id = $1;`,
+		values: [idDaCobranca]
+	};
+
+	const result = await db.query(query);
+	return result.rows.shift();
 }
 
 const pagarCobranca = async (idCobranca) => {
@@ -45,7 +56,8 @@ const pagarCobranca = async (idCobranca) => {
 }
 
 module.exports = {
+	buscarCobranca,
 	criarCobranca,
-	buscarCobrancas,
+	listarCobrancas,
 	pagarCobranca
 }

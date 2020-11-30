@@ -24,6 +24,9 @@ const criarCobranca = async (ctx) => {
 	}
 
 	const padraoData = /^[0-9]{4}\-[0-9]{2}\-[0-9]{2}$/;
+	/* const arrayData = vencimento.parse('-')
+	arrayData[1] -= 1;
+	vencimento = arrayData.join('-') */
 	if  (!padraoData.test(vencimento)  || Number.isNaN(new Date(vencimento).getTime()) ||
 	new Date().getTime() > new Date(vencimento).getTime()) {
 		return response(ctx, 400, { mensagem: 'Data inválida'});
@@ -78,7 +81,7 @@ const listarCobrancas = async (ctx) => {
 	const { cobrancasPorPagina = 10, offset = 0} = ctx.query;
 	const { userId } = ctx.state;
 	
-	const todasAscobrancas = await cobrancasRepositorio.buscarCobrancas(userId);
+	const todasAscobrancas = await cobrancasRepositorio.listarCobrancas(userId);
 	const paginacao = calcularPaginas(todasAscobrancas, cobrancasPorPagina, offset);
 	
 	const boletosResposta = formatacaoRelatorios.formatarCobranca(paginacao['itensDaPagina']);
@@ -98,10 +101,25 @@ const pagarCobranca = async (ctx) => {
 		return response(ctx, 400, { mensagem: 'Id inválida'})
 	}
 
+	const cobranca = await cobrancasRepositorio.buscarCobranca(idDaCobranca);  // como garantir que a cobranca é do usuario? por enquanto um usuario pode pagar cobrança de outro
+
+	if (!cobranca) {
+		return response(ctx, 404, { mensagem: 'Cobrança não encontrada' });
+	}
+
+	if (cobranca.pago) {
+		return response(ctx, 400, { mensagem: 'Essa cobrança já foi paga' });
+	}
+
+	if (new Date().getTime() > new Date(cobranca.vencimento).getTime()) {
+		console.log('oi')
+		return response(ctx, 400, { mensagem: "O boleto está vencido." });
+	}
+
 	const cobrancaPaga = await cobrancasRepositorio.pagarCobranca(idDaCobranca);
 
 	if (!cobrancaPaga) {
-		return response(ctx, 404, { mensgem: 'Não foi localizada a cobrança' } )
+		return response(ctx, 404, { mensgem: 'Não foi localizada a cobrança' });
 	}
 	
 	return response(ctx, 200, { mensagem: 'cobrança paga com sucesso'});
