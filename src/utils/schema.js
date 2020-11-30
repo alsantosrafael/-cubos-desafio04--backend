@@ -34,8 +34,6 @@ const schema = {
 		deletado BOOL DEFAULT FALSE
 	);`,
 };
-/* TOda vez que ocorrer um insert de bills ou pagamento de conta,
-atualizar a tabela de clients com os valores das cobrancas! */
 
 const drop = async (nomeTabela) => {
 	if (nomeTabela) {

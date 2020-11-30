@@ -1,34 +1,34 @@
 const Router = require('koa-router');
 
 const router = new Router();
-const PasswordMiddleware = require('./middlewares/encrypt');
-const SessionMiddleware = require('./middlewares/session');
-const Autenticar = require('./controllers/auth');
-const UsersController = require('./controllers/users');
-const ClientsController = require('./controllers/clients');
+const passwordMiddleware = require('./middlewares/encrypt');
+const sessionMiddleware = require('./middlewares/session');
+const authController = require('./controllers/auth');
+const usersController = require('./controllers/users');
+const clientsController = require('./controllers/clients');
 const cobrancaController = require('./controllers/bills');
-const obterRelatorio = require('./controllers/relatorio');
+const relatorioController = require('./controllers/relatorio');
 
 /*
  ** Definição de rotas
  */
 // auth
-router.post('/auth', Autenticar);
+router.post('/auth', authController.autenticar);
 
 // usuários
-router.post('/usuarios', PasswordMiddleware.encrypt, UsersController.criarUsuario);
+router.post('/usuarios', passwordMiddleware.encrypt, usersController.criarUsuario);
 
 // clientes
-router.post('/clientes', SessionMiddleware.verifica, ClientsController.criarCliente);
-router.put('/clientes', SessionMiddleware.verifica, ClientsController.editarCliente);
-router.get('/clientes', SessionMiddleware.verifica, ClientsController.listarClientes);
+router.post('/clientes', sessionMiddleware.verifica, clientsController.criarCliente);
+router.put('/clientes', sessionMiddleware.verifica, clientsController.editarCliente);
+router.get('/clientes', sessionMiddleware.verifica, clientsController.listarClientes);
 
 // cobranças
-router.post('/cobrancas', SessionMiddleware.verifica, cobrancaController.criarCobranca);
-router.get('/cobrancas', SessionMiddleware.verifica, cobrancaController.listarCobrancas);
-router.put('/cobrancas', SessionMiddleware.verifica, cobrancaController.pagarCobranca);
+router.post('/cobrancas', sessionMiddleware.verifica, cobrancaController.criarCobranca);
+router.get('/cobrancas', sessionMiddleware.verifica, cobrancaController.listarCobrancas);
+router.put('/cobrancas', sessionMiddleware.verifica, cobrancaController.pagarCobranca);
 
 // relatório 
-router.get('/relatorios', SessionMiddleware.verifica, obterRelatorio)
+router.get('/relatorios', sessionMiddleware.verifica, relatorioController.obterRelatorio)
 
 module.exports = router;

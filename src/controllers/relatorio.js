@@ -14,4 +14,4 @@ const obterRelatorio = async (ctx) => {
 	return response(ctx, 200, { relatorio })
 }
 
-module.exports = obterRelatorio
+module.exports = { obterRelatorio }

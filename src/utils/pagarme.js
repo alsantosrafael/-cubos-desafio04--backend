@@ -7,7 +7,6 @@ const criarBoleto = async (
 	amount, 
 	boleto_expiration_date
 	) => {
-	
 		try {
 			const transaction = await axios.post(
 				'https://api.pagar.me/1/transactions', {
@@ -16,13 +15,12 @@ const criarBoleto = async (
 					customer,
 					api_key: process.env.PAGARME_CHAVE,
 					boleto_expiration_date,
-					boleto_instructions
 				}
-			)
+			);
 			return transaction;
 		} catch(err) {
-			console.log(err.response.data)
-			return { mensagem: 'erro na criacao do boleto'}
+			console.log(err.response.data);
+			return { mensagem: 'erro na criacao do boleto' };
 		} 
 };
 

@@ -81,7 +81,7 @@ const listarCobrancas = async (ctx) => {
 	const todasAscobrancas = await cobrancasRepositorio.buscarCobrancas(userId);
 	const paginacao = calcularPaginas(todasAscobrancas, cobrancasPorPagina, offset);
 	
-	const boletosResposta = formatacaoRelatorios.formatarBoletos(paginacao['itensDaPagina']);
+	const boletosResposta = formatacaoRelatorios.formatarCobranca(paginacao['itensDaPagina']);
 	
 	const resposta = {
 		paginaAtual: paginacao['paginaAtual'],

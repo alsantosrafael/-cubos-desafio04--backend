@@ -31,4 +31,4 @@ const autenticar = async (ctx) => {
 	return response(ctx, 401, { mensagem: 'Email ou senha incorretos' });
 };
 
-module.exports = autenticar;
+module.exports ={ autenticar };

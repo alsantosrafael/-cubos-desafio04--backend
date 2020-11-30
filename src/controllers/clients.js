@@ -60,7 +60,7 @@ const editarCliente = async (ctx) => {
 		return response(ctx, 400, { mensagem: 'Não foi localizada id' })
 	}
 
-	const cliente = await obterCliente('id', id, ctx.state.userId);
+	const cliente = await clienteRepositorio.obterCliente('id', id, ctx.state.userId);
 	if (!cliente) {
 		return response(ctx, 404, { mensagem: 'Cliente não encontrado' });
 	}

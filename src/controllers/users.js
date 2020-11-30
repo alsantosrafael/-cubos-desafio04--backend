@@ -21,7 +21,7 @@ const criarUsuario = async (ctx) => {
 
 	const result = await repositorioUsers.criarUsuario(usuario);
 
-	/*Adicionar email de confirmação/registro */
+	/* TODO Adicionar email de confirmação/registro */
 
 	return response(ctx, 201, { id: result.id });
 };
