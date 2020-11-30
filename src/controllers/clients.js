@@ -60,6 +60,10 @@ const editarCliente = async (ctx) => {
 		return response(ctx, 400, { mensagem: 'Não foi localizada id' })
 	}
 
+	if (!isValid(cpf)) {
+		return response(ctx, 400, { mensagem: 'O CPF não é válido' })
+	}
+
 	const cliente = await clienteRepositorio.obterCliente('id', id, ctx.state.userId);
 	if (!cliente) {
 		return response(ctx, 404, { mensagem: 'Cliente não encontrado' });
