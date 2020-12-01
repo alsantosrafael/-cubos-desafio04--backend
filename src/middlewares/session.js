@@ -1,8 +1,6 @@
 const jwt = require('jsonwebtoken');
 const response = require('../utils/response');
 
-// require('dotenv').config();
-
 const verifica = async (ctx, next) => {
 	const { authorization } = ctx.headers
 

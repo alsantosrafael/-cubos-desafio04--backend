@@ -1,5 +1,6 @@
 const repositorioUsers = require('../repositories/users');
 const response = require('../utils/response');
+const { enviarEmailNovoUsuário } = require('../utils/email')
 
 const criarUsuario = async (ctx) => {
 	const { email = null, nome = null } = ctx.request.body;
@@ -21,7 +22,7 @@ const criarUsuario = async (ctx) => {
 
 	const result = await repositorioUsers.criarUsuario(usuario);
 
-	/* TODO Adicionar email de confirmação/registro */
+	enviarEmailNovoUsuário(email);
 
 	return response(ctx, 201, { id: result.id });
 };

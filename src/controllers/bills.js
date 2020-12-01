@@ -3,7 +3,8 @@ const clienteRepositorio = require('../repositories/clients');
 const cobrancasRepositorio = require('../repositories/bills');
 const pagarmeUtils = require('../utils/pagarme');
 const calcularPaginas = require('../utils/paginacao');
-const formatacaoRelatorios = require('../utils/formatacaoRelatorios')
+const formatacaoRelatorios = require('../utils/formatacaoRelatorios');
+const { enviarEmailNovaCobranca } = require('../utils/email')
 
 const criarCobranca = async (ctx) => {
 	const idDoUsuario = ctx.state.userId;
@@ -24,10 +25,10 @@ const criarCobranca = async (ctx) => {
 	}
 
 	const padraoData = /^[0-9]{4}\-[0-9]{2}\-[0-9]{2}$/;
-	/* const arrayData = vencimento.parse('-')
+	const arrayData = vencimento.parse('-')
 	arrayData[1] -= 1;
-	vencimento = arrayData.join('-') */
-	if  (!padraoData.test(vencimento)  || Number.isNaN(new Date(vencimento).getTime()) ||
+	vencimento = arrayData.join('-')
+	if  (!padraoData.test(vencimento)  || !(typeof (new Date(vencimento).getTime() === Number)) ||
 	new Date().getTime() > new Date(vencimento).getTime()) {
 		return response(ctx, 400, { mensagem: 'Data inválida'});
 	} 
@@ -53,7 +54,7 @@ const criarCobranca = async (ctx) => {
 	};
 
 	const respostaApiPagarme = await pagarmeUtils.criarBoleto(pagarmeCliente, valor, vencimento);
-	console.log(respostaApiPagarme)
+	
 	const boleto = {
 		id_cliente: Number(respostaApiPagarme.data.customer.external_id),
 		descricao,
@@ -73,6 +74,8 @@ const criarCobranca = async (ctx) => {
 		linkDoBoleto: retornoBancoDeDados.link_do_boleto,
 		status: 'AGUARDANDO'
 	};
+
+	await enviarEmailNovaCobranca(cliente.email);
 
 	return response(ctx, 201, { cobranca });
 }
@@ -95,10 +98,17 @@ const listarCobrancas = async (ctx) => {
 }
 
 const pagarCobranca = async (ctx) => {
+	const { userId } = ctx.state
 	const { idDaCobranca } = ctx.request.body;
 
-	if (!idDaCobranca || Number.isNaN(idDaCobranca)) {  // enviar uma id nao numerica retorna erro, porque?
+	if (!idDaCobranca || !(typeof idDaCobranca === Number) ) { 
 		return response(ctx, 400, { mensagem: 'Id inválida'})
+	}
+
+	const cobrancasDoUsuario = await cobrancasRepositorio.listarCobrancas(userId);
+	const cobrancaDoUsuario = cobrancasDoUsuario.find(cobranca => cobranca.id === idDaCobranca);
+	if (!cobrancaDoUsuario) {
+		return response(ctx, 403, { mensagem: "Id inválida" })
 	}
 
 	const cobranca = await cobrancasRepositorio.buscarCobranca(idDaCobranca);  // como garantir que a cobranca é do usuario? por enquanto um usuario pode pagar cobrança de outro

@@ -25,4 +25,27 @@ const enviarEmail = async (to, subject, html) => {
 	return email;
 };
 
-module.exports = { enviarEmail };
+const enviarEmailNovaCobranca = async (to) => {
+	const html = '';
+
+	await enviarEmail(
+		to, 
+		'Você tem uma nova cobrança!', 
+		html
+	);
+};
+
+const enviarEmailNovoUsuário = async (to) => {
+	const html = '';
+
+	await enviarEmail(
+		to, 
+		'Bem-vindo(a)! Confirme sua conta para continuar!', 
+		html
+	);
+}
+
+module.exports = { 
+	enviarEmailNovaCobranca,
+	enviarEmailNovoUsuário
+};
