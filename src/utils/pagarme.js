@@ -9,7 +9,7 @@ const criarBoleto = async (
 	) => {
 		try {
 			const transaction = await axios.post(
-				'https://api.pagar.me/1/transactions', {
+				process.env.PAGARME_BASE_URL, {
 					amount,
 					payment_method: 'boleto',
 					customer,

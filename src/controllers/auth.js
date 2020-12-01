@@ -20,7 +20,7 @@ const autenticar = async (ctx) => {
 			const token = await jwt.sign(
 				{ id: user.id, email: user.email },
 				process.env.JWT_SECRET,
-				{ expiresIn: '1h' }
+				{ expiresIn: process.env.JWT_EXPIRING_TIME }
 			);
 			return response(ctx, 200, { 
 				mensagem: "Usuário logado com sucesso!",
