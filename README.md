@@ -59,6 +59,7 @@ consta a criação de usuário, criação e edição de clientes, criação e pa
 - Clientes
   - A funcionalidade de cadastro de clientes funciona requisitando `POST /clientes`;
   - A funcionalidade de listagem de clientes funciona requisitando `GET /clientes`;
+    nota: a funcionalidade de listar clientes pode possuir um campo chamado `busca`, que procura o texto passado nos campos de nome, email e cpf.
   - A funcionalidade de edição de clientes funciona requisitando `PUT /clientes`.
   
 - Cobranças 
