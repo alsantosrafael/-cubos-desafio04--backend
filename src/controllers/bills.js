@@ -25,9 +25,9 @@ const criarCobranca = async (ctx) => {
 	}
 
 	const padraoData = /^[0-9]{4}\-[0-9]{2}\-[0-9]{2}$/;
-	const arrayData = vencimento.parse('-')
-	arrayData[1] -= 1;
-	vencimento = arrayData.join('-')
+	/* const arrayData = vencimento.split('-')
+	arrayData[1] = Number(arrayData[1]) - 1;
+	const vencimentoCorrigido = arrayData.join('-') */
 	if  (!padraoData.test(vencimento)  || !(typeof (new Date(vencimento).getTime() === Number)) ||
 	new Date().getTime() > new Date(vencimento).getTime()) {
 		return response(ctx, 400, { mensagem: 'Data inválida'});
@@ -75,7 +75,12 @@ const criarCobranca = async (ctx) => {
 		status: 'AGUARDANDO'
 	};
 
-	await enviarEmailNovaCobranca(cliente.email);
+	await enviarEmailNovaCobranca(cliente.email, {
+		valor: retornoBancoDeDados.valor,
+		vencimento : retornoBancoDeDados.vencimento,
+		descricao: retornoBancoDeDados.descricao,
+		id: retornoBancoDeDados.id
+	});
 
 	return response(ctx, 201, { cobranca });
 }
