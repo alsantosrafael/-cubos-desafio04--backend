@@ -4,7 +4,7 @@ const cobrancasRepositorio = require('../repositories/bills');
 const pagarmeUtils = require('../utils/pagarme');
 const calcularPaginas = require('../utils/paginacao');
 const formatacaoRelatorios = require('../utils/formatacaoRelatorios');
-const { enviarEmailNovaCobranca } = require('../utils/email')
+const { enviarEmailNovaCobranca } = require('../utils/email');
 
 const criarCobranca = async (ctx) => {
 	const idDoUsuario = ctx.state.userId;
@@ -24,12 +24,8 @@ const criarCobranca = async (ctx) => {
 		return response(ctx, 400, { mensagem: 'Valor inválido' });
 	}
 
-	const padraoData = /^[0-9]{4}\-[0-9]{2}\-[0-9]{2}$/;
-	/* const arrayData = vencimento.split('-')
-	arrayData[1] = Number(arrayData[1]) - 1;
-	const vencimentoCorrigido = arrayData.join('-') */
-	if  (!padraoData.test(vencimento)  || !(typeof (new Date(vencimento).getTime() === Number)) ||
-	new Date().getTime() > new Date(vencimento).getTime()) {
+	
+	if  (Number.isNaN(new Date(vencimento).getTime()) || new Date() > new Date(vencimento)) {
 		return response(ctx, 400, { mensagem: 'Data inválida'});
 	} 
 
@@ -53,7 +49,9 @@ const criarCobranca = async (ctx) => {
 		]
 	};
 
-	const respostaApiPagarme = await pagarmeUtils.criarBoleto(pagarmeCliente, valor, vencimento);
+	const vencimentoPagarme = (new Date(vencimento)).toISOString().substring(0, 10);
+
+	const respostaApiPagarme = await pagarmeUtils.criarBoleto(pagarmeCliente, valor, vencimentoPagarme);
 	
 	const boleto = {
 		id_cliente: Number(respostaApiPagarme.data.customer.external_id),
