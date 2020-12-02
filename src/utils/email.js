@@ -14,6 +14,12 @@ const config = {
 
 const transport = nodemailer.createTransport(config);
 
+/**
+ * Responsável por enviar os emails.
+ * @param {string} to 
+ * @param {string} subject 
+ * @param {string} html 
+ */
 const enviarEmail = async (to, subject, html) => {
 	const email = await transport.sendMail({
 		from: '"Cubos Payments 👻" <cubos@cubos.payments.io>',
@@ -25,6 +31,11 @@ const enviarEmail = async (to, subject, html) => {
 	return email;
 };
 
+/**
+ * Responsável por formatar o email de nova cobrança.
+ * @param {string} to 
+ * @param {Object} informacoes 
+ */
 const enviarEmailNovaCobranca = async (to, informacoes) => {
 	const { valor, vencimento, descricao, id } = informacoes
 
@@ -134,6 +145,10 @@ const enviarEmailNovaCobranca = async (to, informacoes) => {
 	);
 };
 
+/**
+ * Responsável por formatar o email de novo usuário.
+ * @param {*} to 
+ */
 const enviarEmailNovoUsuário = async (to) => {
 	const html = `<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 	<html xmlns="http://www.w3.org/1999/xhtml" style="font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; box-sizing: border-box; font-size: 14px; margin: 0;">
