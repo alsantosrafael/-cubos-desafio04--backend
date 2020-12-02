@@ -8,6 +8,8 @@ consta a criação de usuário, criação e edição de clientes, criação e pa
 
 <p> O projeto possui um código para Front-end que está em outro repositório. Caso exista interesse, <a href='https://github.com/alsantosrafael/cubos-desafio04--frontend'>clique aqui</a></p>
 
+<p> Existe uma collection no Postman com os <b>modelos</b> de envio de requisição. Para acessá-la, clique <a href='https://www.getpostman.com/collections/ce21b4cf20b38101656b'>aqui</a>. Importante lembrar que para qualquer outro endpoint que não criar usuário ou autenticação, é necessário a inserção do token retornado pelo endpoint de autenticação no campo `Bearer Token`. 
+
 ## O que este projeto utiliza?
 
 - javascript;
