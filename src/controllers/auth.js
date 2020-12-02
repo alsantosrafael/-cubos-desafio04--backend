@@ -5,6 +5,10 @@ const Password = require('../utils/password');
 
 require('dotenv').config();
 
+/**
+ * verifica credencias do usuário e em caso de sucesso retorna o token.
+ * @param {context} ctx 
+ */
 const autenticar = async (ctx) => {
 	const { email = null, senha = null } = ctx.request.body;
 	

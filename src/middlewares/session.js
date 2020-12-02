@@ -1,6 +1,11 @@
 const jwt = require('jsonwebtoken');
 const response = require('../utils/response');
 
+/**
+ * Verifica se o usuário possui token autorizado.
+ * @param {contect} ctx 
+ * @param {*} next 
+ */
 const verifica = async (ctx, next) => {
 	const { authorization } = ctx.headers
 
