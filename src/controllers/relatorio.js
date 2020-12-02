@@ -3,6 +3,10 @@ const cobrancasRepositorio = require('../repositories/bills')
 const { formatarRelatorio } = require('../utils/formatacaoRelatorios');
 const response = require('../utils/response');
 
+/**
+ * Gera o relatório do usuário.
+ * @param {context} ctx 
+ */
 const obterRelatorio = async (ctx) => {
 	const { userId } = ctx.state;
 
