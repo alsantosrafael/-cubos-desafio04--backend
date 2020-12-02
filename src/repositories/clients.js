@@ -1,5 +1,9 @@
 const db = require('../utils/database');
 
+/**
+ * Cria um item de cliente no banco de dados.
+ * @param {Object} cliente 
+ */
 const criarCliente = async (cliente) => {
 	const {id_user, nome, cpf, email, tel } = cliente;
 	const query = {
@@ -16,6 +20,12 @@ const criarCliente = async (cliente) => {
 	return result.rows.shift();
 };
 
+/**
+ * Procura por um item de cliente no banco de dados a partir de um dado específico.
+ * @param {string} campo 
+ * @param {string} valor 
+ * @param {number} id_user 
+ */
 const obterCliente = async (campo, valor, id_user) => {
 	if (!campo) {
 		return null;
@@ -29,6 +39,10 @@ const obterCliente = async (campo, valor, id_user) => {
 	return result.rows.shift();
 };
 
+/**
+ * Modifica um item de cliente no banco de dados. 
+ * @param {Object} cliente 
+ */
 const editarCliente = async (cliente) => {
 	const {id, nome, cpf, email, tel, deletado} = cliente;
 
@@ -46,6 +60,10 @@ const editarCliente = async (cliente) => {
 	return result.rows.shift();
 }
 
+/**
+ * Lista clientes filtrando apenas pelo ID do usuário responsável.
+ * @param {number} id_user 
+ */
 const listarClientesSemBusca = async (id_user) => {
 	const query = {
 		text:`SELECT * 
@@ -58,7 +76,11 @@ const listarClientesSemBusca = async (id_user) => {
 	return result.rows;
 }
 
-// corrigir para nova versao
+/**
+ * lista clientes usando como filtro a ID do usuário e de um texto fornecido.
+ * @param {number} userId 
+ * @param {string} busca 
+ */
 const listarClientesComBusca = async (userId, busca) => {
 
 	const query = {

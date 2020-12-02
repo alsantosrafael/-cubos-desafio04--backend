@@ -5,7 +5,12 @@ const calcularPaginas = require('../utils/paginacao');
 const { formatarClientes } = require('../utils/formatacaoRelatorios');
 const cobrancasRepositorio = require('../repositories/bills');
 
-
+/**
+ * Testa se o cpf ou o email passado já está sendo utilizado.
+ * @param {string} email 
+ * @param {string} cpf 
+ * @param {number} id_user 
+ */
 const testarExistenciaCliente = async (email = null, cpf = null, id_user) => {
 	let clienteExistenteEmail;
 	let clienteExistenteCPF;
@@ -27,6 +32,10 @@ const testarExistenciaCliente = async (email = null, cpf = null, id_user) => {
 
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ 
 
+/**
+ * Cria um novo cliente.
+ * @param {context} ctx 
+ */
 const criarCliente = async (ctx) => {
 	const { nome, cpf, email, tel } = ctx.request.body;
 	if (!nome || !cpf || !email || !tel) {
@@ -54,6 +63,10 @@ const criarCliente = async (ctx) => {
 	return response(ctx, 201, { id: retorno.id });
 };
 
+/**
+ * Edita um cliente existente.
+ * @param {context} ctx 
+ */
 const editarCliente = async (ctx) => {
 	const { id, nome, cpf, email, tel, deletado } = ctx.request.body;
 	if (!id) {
@@ -99,6 +112,10 @@ const editarCliente = async (ctx) => {
 	});
 };
 
+/**
+ * Lista os clientes do usuário (podendo usar texto de busca ou não).
+ * @param {*} ctx 
+ */
 const listarClientes = async (ctx) => {
 	const { offset = 0, clientesPorPagina = 10, busca = null } = ctx.query;
 	const { userId } = ctx.state;
