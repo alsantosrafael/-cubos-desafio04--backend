@@ -2,6 +2,12 @@ const axios = require('axios').default;
 
 require('dotenv').config();
 
+/**
+ * Faz a integração com a api externa da pagar.me
+ * @param {Object} customer 
+ * @param {number} amount 
+ * @param {string} boleto_expiration_date 
+ */
 const criarBoleto = async (
 	customer, 
 	amount, 
