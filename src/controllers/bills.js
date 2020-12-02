@@ -6,6 +6,10 @@ const calcularPaginas = require('../utils/paginacao');
 const formatacaoRelatorios = require('../utils/formatacaoRelatorios');
 const { enviarEmailNovaCobranca } = require('../utils/email');
 
+/**
+ * Cria uma nova cobrança.
+ * @param {context} ctx 
+ */
 const criarCobranca = async (ctx) => {
 	const idDoUsuario = ctx.state.userId;
 
@@ -83,6 +87,10 @@ const criarCobranca = async (ctx) => {
 	return response(ctx, 201, { cobranca });
 }
 
+/**
+ * Lista as cobranças do usuário.
+ * @param {context} ctx 
+ */
 const listarCobrancas = async (ctx) => {
 	const { cobrancasPorPagina = 10, offset = 0} = ctx.query;
 	const { userId } = ctx.state;
@@ -100,6 +108,10 @@ const listarCobrancas = async (ctx) => {
 	return response(ctx, 200, resposta )
 }
 
+/**
+ * Paga uma cobrança.
+ * @param {context} ctx 
+ */
 const pagarCobranca = async (ctx) => {
 	const { userId } = ctx.state
 	const { idDaCobranca } = ctx.request.body;

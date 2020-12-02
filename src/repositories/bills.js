@@ -1,5 +1,9 @@
 const db = require('../utils/database');
 
+/**
+ * Cria um novo item de cobrança no banco de dados.
+ * @param {Object} boleto 
+ */
 const criarCobranca = async (boleto) => {
 	const {id_cliente, descricao = '', valor, vencimento, link_do_boleto, codigo_boleto } = boleto;
 	const query = {
@@ -17,6 +21,10 @@ const criarCobranca = async (boleto) => {
 	return result.rows.shift();
 }
 
+/**
+ * Busca no banco de dados todos os items de cobrança do usuário.
+ * @param {number} id_user 
+ */
 const listarCobrancas = async (id_user) => {
 	const query = {
 		text: `SELECT * FROM bills
@@ -31,6 +39,10 @@ const listarCobrancas = async (id_user) => {
 	return result.rows;
 }
 
+/**
+ * Busca uma cobrança específica.
+ * @param {number} idDaCobranca 
+ */
 const buscarCobranca = async (idDaCobranca) => {
 	const query = {
 		text: `SELECT * FROM bills
@@ -42,6 +54,10 @@ const buscarCobranca = async (idDaCobranca) => {
 	return result.rows.shift();
 }
 
+/**
+ * Troca o status do item de cobrança no banco de dados para true. 
+ * @param {number} idCobranca 
+ */
 const pagarCobranca = async (idCobranca) => {
 	const query = {
 		text: `UPDATE bills 
