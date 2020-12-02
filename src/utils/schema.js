@@ -35,6 +35,10 @@ const schema = {
 	);`,
 };
 
+/**
+ * Dropa uma tabela.
+ * @param {string} nomeTabela 
+ */
 const drop = async (nomeTabela) => {
 	if (nomeTabela) {
 		await DB.query(`DROP TABLE ${nomeTabela}`);
@@ -42,6 +46,10 @@ const drop = async (nomeTabela) => {
 	}
 };
 
+/**
+ * Responsável por rodar o schema.
+ * @param {number} num 
+ */
 const up = async (num = null) => {
 	if (!num) {
 		const schemaKeys = Object.keys(schema);
