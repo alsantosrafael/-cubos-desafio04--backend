@@ -1,5 +1,9 @@
 const db = require('../utils/database');
 
+/**
+ * Cria um item de usuário no banco de dados.
+ * @param {Object} usuario 
+ */
 const criarUsuario = async (usuario) => {
 	const { email, senha, nome } = usuario;
 	const query = {
@@ -14,6 +18,10 @@ const criarUsuario = async (usuario) => {
 	return result.rows.shift();
 };
 
+/**
+ * Busca por um item de usuário no banco de dados a partir do email. 
+ * @param {string} email 
+ */
 const obterUsuarioPorEmail = async (email = null) => {
 	if (!email) {
 		return null;

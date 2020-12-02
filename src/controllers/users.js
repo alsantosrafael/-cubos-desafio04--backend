@@ -2,6 +2,10 @@ const repositorioUsers = require('../repositories/users');
 const response = require('../utils/response');
 const { enviarEmailNovoUsuário } = require('../utils/email')
 
+/**
+ * Cria um novo usuário.
+ * @param {context} ctx 
+ */
 const criarUsuario = async (ctx) => {
 	const { email = null, nome = null } = ctx.request.body;
 	const { hash } = ctx.state;

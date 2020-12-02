@@ -2,7 +2,7 @@ const Password = require('../utils/password');
 const response = require('../utils/response');
 
 /**
- * Função responsável por encriptar a senha do usuário quando ele for cadastrado
+ * Função responsável por encriptar a senha do usuário no momento do cadastro.
  * @param {*Contexto} ctx
  * @param {*Next} next
  */

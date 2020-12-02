@@ -1,8 +1,9 @@
 const bcrypt = require('bcryptjs');
 
 /**
- * Função responsável por estabelecer a comparação da senha enviada pelo usuário
- * com a hash obtida do banco de dados
+ * Compara a senha fornecida com a hash no banco de dados.
+ * @param {string} senha 
+ * @param {string} hash 
  */
 const checarSenha = async (senha, hash) => {
     const compara = await bcrypt.compare(senha, hash);
@@ -10,8 +11,8 @@ const checarSenha = async (senha, hash) => {
 };
 
 /**
- * Função responsável por codificar a senha enviada pelo usuário quando
- * for cadastrado.
+ * Responsável por criar a hash da senha no momento do cadastro de usuário.
+ * @param {string} senha 
  */
 const encrypt = async (senha) => {
     const hash = await bcrypt.hash(senha, 10);
