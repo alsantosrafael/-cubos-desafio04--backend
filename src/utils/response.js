@@ -1,5 +1,8 @@
 /**
- * Função responsável por obter informações e formatar resposta à requisições
+ * Responsável por modelar a resposta de retorno dos endpoints.
+ * @param {context} ctx 
+ * @param {number} code 
+ * @param {Object} dados 
  */
  const response = (ctx, code, dados) => {
 	ctx.status = code;
