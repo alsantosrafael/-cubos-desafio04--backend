@@ -1,3 +1,7 @@
+/**
+ * Formata o modelo para resposta sobre cobrança.
+ * @param {array} listaDeBoletos 
+ */
 const formatarCobranca = (listaDeBoletos) => {
 	const boletosFormatados = listaDeBoletos.map(item => {
 		const resposta = {
@@ -14,6 +18,11 @@ const formatarCobranca = (listaDeBoletos) => {
 	return boletosFormatados
 }
 
+/**
+ * Formata o modelo de resposta sobre cliente.
+ * @param {array} listaDeClientes 
+ * @param {array} listaDeCobrancas 
+ */
 const formatarClientes = (listaDeClientes, listaDeCobrancas) => {
 	const cobrancasFormatadas = formatarCobranca(listaDeCobrancas);
 	 
@@ -51,14 +60,19 @@ const formatarClientes = (listaDeClientes, listaDeCobrancas) => {
 	return clientesFormatadosArray
 }
 
+/**
+ * Formata o mdelo de resposta sobre usuário.
+ * @param {array} listaDeClientes 
+ * @param {array} listaDeCobrancas 
+ */
 const formatarRelatorio = (listaDeClientes, listaDeCobrancas) => {
 	const relatorio = {
-		qtdClientesAdimplentes: 0, 			// clientesFormatados
-		qtdClientesInadimplentes: 0, 		// clientesFormatados
-		qtdCobrancasPrevistas: 0,  			// cobrancasFormatadas
-		qtdCobrancasPagas: 0,  				// cobrancasFormatadas
-		qtdCobrancasVencidas: 0,			// cobrancasFormatadas
-		saldoEmConta: 0, 					// clientesFormatados
+		qtdClientesAdimplentes: 0,
+		qtdClientesInadimplentes: 0,
+		qtdCobrancasPrevistas: 0,
+		qtdCobrancasPagas: 0,
+		qtdCobrancasVencidas: 0,
+		saldoEmConta: 0,
 	}
 
 	const clientesFormatados = formatarClientes(listaDeClientes, listaDeCobrancas);
